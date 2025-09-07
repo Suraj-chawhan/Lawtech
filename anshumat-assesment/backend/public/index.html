@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resume Builder</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 20px; }
+    h1 { text-align: center; color: #333; }
+    h2 { color: #444; }
+    input, textarea, button {
+      margin: 8px 0; padding: 10px; width: 100%;
+      border: 1px solid #ccc; border-radius: 5px;
+      font-size: 14px;
+    }
+    button {
+      background: #007bff; color: white; border: none; cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    form { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .resume {
+      background: #fff; padding: 15px; border-radius: 8px;
+      margin: 10px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .hidden { display: none; }
+    #resumes button { width: auto; margin-right: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Resume Builder</h1>
+
+  <!-- AUTH -->
+  <div id="auth">
+    <h2>Signup</h2>
+    <input id="signupEmail" placeholder="Email" type="email">
+    <input id="signupPass" type="password" placeholder="Password">
+    <button onclick="signup()">Signup</button>
+
+    <h2>Login</h2>
+    <input id="loginEmail" placeholder="Email" type="email">
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="hidden">
+    <h2>Create Resume</h2>
+    <form id="resumeForm">
+      <input placeholder="Full Name" id="name" required>
+      <input placeholder="Email" id="email" type="email" required>
+      <textarea placeholder="Education" id="education"></textarea>
+      <textarea placeholder="Experience" id="experience"></textarea>
+      <textarea placeholder="Skills" id="skills"></textarea>
+      <button type="submit">Save Resume</button>
+    </form>
+
+    <h2>Your Resumes</h2>
+    <div id="resumes"></div>
+  </div>
+
+<script>
+let token = "";
+const API = window.location.origin;
+
+// SIGNUP
+async function signup() {
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPass").value;
+  const res = await fetch(`${API}/auth/signup`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ email, password })
+  });
+  if (res.ok) {
+    alert("Signup successful. Please login.");
+  } else {
+    alert("Signup failed. Email may already exist.");
+  }
+}
+
+// LOGIN
+async function login() {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPass").value;
+  const res = await fetch(`${API}/auth/login`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json();
+  token = data.token;
+  if (token) {
+    document.getElementById("auth").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    loadResumes();
+  } else {
+    alert("Login failed. Check credentials.");
+  }
+}
+
+// CREATE RESUME
+document.getElementById("resumeForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const resume = {
+    personal: {
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value,
+    },
+    education: document.getElementById("education").value,
+    experience: document.getElementById("experience").value,
+    skills: document.getElementById("skills").value,
+  };
+  await fetch(`${API}/resume`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+    body: JSON.stringify(resume)
+  });
+  loadResumes();
+  document.getElementById("resumeForm").reset();
+});
+
+// LOAD RESUMES
+async function loadResumes() {
+  const res = await fetch(`${API}/resume`, {
+    headers: { "Authorization": "Bearer " + token }
+  });
+  const resumes = await res.json();
+  const container = document.getElementById("resumes");
+  container.innerHTML = "";
+  resumes.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "resume";
+    div.innerHTML = `
+      <h3>${r.personal.name}</h3>
+      <p>${r.personal.email}</p>
+      <p><b>Education:</b> ${r.education}</p>
+      <p><b>Experience:</b> ${r.experience}</p>
+      <p><b>Skills:</b> ${r.skills}</p>
+      <button onclick="downloadPDF('${r._id}')">Download PDF</button>
+      <button onclick="deleteResume('${r._id}')">Delete</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// DOWNLOAD PDF
+async function downloadPDF(id) {
+  const res = await fetch(`${API}/resume/${id}/pdf`, {
+    headers: { "Authorization": "Bearer " + token }
+  });
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "resume.pdf";
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
+// DELETE RESUME
+async function deleteResume(id) {
+  await fetch(`${API}/resume/${id}`, {
+    method: "DELETE",
+    headers: { "Authorization": "Bearer " + token }
+  });
+  loadResumes();
+}
+</script>
+</body>
+</html>

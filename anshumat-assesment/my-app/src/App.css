@@ -1,0 +1,254 @@
+/* Reset & Base */
+body {
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Navbar */
+.navbar {
+  background: #007bff;
+  padding: 10px 20px;
+  color: #fff;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  
+  font-size: 28px;
+  
+  display: none; /* show on mobile */
+  z-index: 1300;
+  margin-right:-100px;
+  padding: 5px 10px;
+   
+}
+
+/* Desktop menu */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-links li {
+  display: inline;
+}
+
+.nav-links a,
+.logout-btn {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+
+
+/* Mobile Drawer */
+@media (max-width: 768px) {
+  .menu-btn {
+    display: block;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: -60%; /* hidden */
+    width: 60%;   /* menu covers 60% of screen */
+    height: 100%;
+    background: #007bff;
+    padding: 60px 20px;
+    transition: right 0.3s ease-in-out;
+    z-index: 1200;
+  }
+
+  .nav-links.active {
+    right: 0; /* slide in */
+  }
+
+  .nav-links li {
+    margin: 15px 0;
+  }
+
+  .nav-links a,
+  .logout-btn {
+    display: block;
+    width: 100%;
+    font-size: 18px;
+    padding: 12px 0;
+    text-align: left;
+  }
+
+  /* Overlay covers left 40% only */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40%; 
+    height: 100%;
+  
+    z-index: 1100;
+  }
+}
+
+/* Footer */
+.footer {
+  background: #f1f1f1;
+  text-align: center;
+  padding: 15px;
+  font-size: 14px;
+  margin-top: 30px;
+}
+
+/* Main content wrapper */
+.main-content {
+  padding: 20px;
+  min-height: calc(100vh - 120px);
+}
+
+/* Headings */
+h1,
+h2 {
+  color: #333;
+  text-align: center;
+}
+
+/* Forms and Inputs */
+input,
+textarea,
+button {
+  margin: 8px 0;
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+/* Auth card */
+.auth-card {
+  background: #fff;
+  padding: 25px;
+  max-width: 400px;
+  margin: 40px auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.auth-card h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  color: white;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+}
+
+.auth-text {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+.auth-text a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.auth-text a:hover {
+  text-decoration: underline;
+}
+
+/* Dashboard */
+.dashboard {
+  width: 100%;
+  margin: auto;
+  padding: 20px;
+}
+
+.dash-header {
+  text-align: center;
+  width: 100%;
+}
+
+.dash-header h1 {
+  font-size: 24px;
+  color: #333;
+}
+
+.logout-btn {
+  background: #ff4d4f;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #cc0000;
+}
